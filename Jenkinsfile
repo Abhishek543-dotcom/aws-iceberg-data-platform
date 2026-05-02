@@ -32,6 +32,7 @@ pipeline {
     TF_IN_AUTOMATION   = 'true'
     TF_INPUT           = '0'
     TERRAFORM_BIN      = '/opt/homebrew/bin/terraform'
+    AWS_BIN            = '/usr/local/bin/aws'
     AWS_DEFAULT_REGION = "${params.AWS_REGION}"
     AWS_REGION         = "${params.AWS_REGION}"
     AWS_CREDS_ID       = 'aws-jenkins-creds'
@@ -57,10 +58,11 @@ pipeline {
             set -euo pipefail
 
             test -x "${TERRAFORM_BIN}"
+            test -x "${AWS_BIN}"
             "${TERRAFORM_BIN}" version
             python3 --version
-            aws --version
-            aws sts get-caller-identity
+            "${AWS_BIN}" --version
+            "${AWS_BIN}" sts get-caller-identity
             test -f "${TF_DIR}/terraform.tfvars"
 
             if grep -q 'backend "local"' "${TF_DIR}/backend.tf"; then
@@ -123,7 +125,7 @@ pipeline {
           sh '''
             set -euo pipefail
             "${TERRAFORM_BIN}" -chdir="${TF_DIR}" plan -out=tfplan
-            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfplan > tfplan.txt
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfplan > "${TF_DIR}/tfplan.txt"
           '''
         }
         archiveArtifacts artifacts: "${env.TF_DIR}/tfplan.txt", fingerprint: true
@@ -142,7 +144,7 @@ pipeline {
           sh '''
             set -euo pipefail
             "${TERRAFORM_BIN}" -chdir="${TF_DIR}" plan -destroy -out=tfdestroy
-            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfdestroy > tfdestroy.txt
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfdestroy > "${TF_DIR}/tfdestroy.txt"
           '''
         }
         archiveArtifacts artifacts: "${env.TF_DIR}/tfdestroy.txt", fingerprint: true
