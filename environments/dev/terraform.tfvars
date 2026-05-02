@@ -1,0 +1,10 @@
+aws_region                    = "us-east-1"
+environment                   = "dev"
+project_name                  = "aws-iceberg-data-platform"
+input_prefix                  = "landing/"
+sns_email                     = "abhi1931480@gmail.com"
+force_destroy                 = true
+log_retention_days            = 30
+glue_timeout_minutes          = 30
+glue_max_retries              = 1
+athena_trusted_principal_arns = []

@@ -1,0 +1,6 @@
+event_id,event_type,user_id,amount,event_ts
+1,signup,1001,0,2026-05-01T09:00:00Z
+2,purchase,1002,49.99,2026-05-01T10:15:00Z
+3,purchase,1003,19.50,2026-05-01T11:30:00Z
+4,refund,1002,-19.50,2026-05-01T12:10:00Z
+5,purchase,1004,199.00,2026-05-01T13:45:00Z
