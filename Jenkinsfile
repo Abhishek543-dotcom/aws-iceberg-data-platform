@@ -17,7 +17,7 @@ pipeline {
     )
     string(
       name: 'AWS_REGION',
-      defaultValue: 'ap-south-1',
+      defaultValue: 'us-east-1',
       description: 'AWS region used by Terraform and the AWS CLI.'
     )
     booleanParam(
@@ -31,6 +31,7 @@ pipeline {
     TF_DIR             = 'environments/dev'
     TF_IN_AUTOMATION   = 'true'
     TF_INPUT           = '0'
+    TERRAFORM_BIN      = '/opt/homebrew/bin/terraform'
     AWS_DEFAULT_REGION = "${params.AWS_REGION}"
     AWS_REGION         = "${params.AWS_REGION}"
     AWS_CREDS_ID       = 'aws-jenkins-creds'
@@ -55,7 +56,8 @@ pipeline {
           sh '''
             set -euo pipefail
 
-            terraform version
+            test -x "${TERRAFORM_BIN}"
+            "${TERRAFORM_BIN}" version
             python3 --version
             aws --version
             aws sts get-caller-identity
@@ -88,7 +90,7 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform -chdir="${TF_DIR}" init
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" init
           '''
         }
       }
@@ -102,8 +104,8 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform fmt -check -recursive
-            terraform -chdir="${TF_DIR}" validate
+            "${TERRAFORM_BIN}" fmt -check -recursive
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" validate
           '''
         }
       }
@@ -120,8 +122,8 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform -chdir="${TF_DIR}" plan -out=tfplan
-            terraform -chdir="${TF_DIR}" show -no-color tfplan > tfplan.txt
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" plan -out=tfplan
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfplan > tfplan.txt
           '''
         }
         archiveArtifacts artifacts: "${env.TF_DIR}/tfplan.txt", fingerprint: true
@@ -139,8 +141,8 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform -chdir="${TF_DIR}" plan -destroy -out=tfdestroy
-            terraform -chdir="${TF_DIR}" show -no-color tfdestroy > tfdestroy.txt
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" plan -destroy -out=tfdestroy
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" show -no-color tfdestroy > tfdestroy.txt
           '''
         }
         archiveArtifacts artifacts: "${env.TF_DIR}/tfdestroy.txt", fingerprint: true
@@ -170,7 +172,7 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform -chdir="${TF_DIR}" apply -auto-approve tfplan
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" apply -auto-approve tfplan
           '''
         }
       }
@@ -187,7 +189,7 @@ pipeline {
         ]]) {
           sh '''
             set -euo pipefail
-            terraform -chdir="${TF_DIR}" apply -auto-approve tfdestroy
+            "${TERRAFORM_BIN}" -chdir="${TF_DIR}" apply -auto-approve tfdestroy
           '''
         }
       }
