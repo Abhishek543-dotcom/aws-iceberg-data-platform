@@ -1,7 +1,7 @@
 locals {
   warehouse_path = "s3://${var.warehouse_bucket_name}/warehouse/"
   script_key     = "artifacts/glue/csv_to_iceberg.py"
-  spark_conf = join(" ", [
+  spark_conf = join(", ", [
     "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
     "spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog",
     "spark.sql.catalog.glue_catalog.warehouse=${local.warehouse_path}",
