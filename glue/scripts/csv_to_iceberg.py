@@ -99,7 +99,7 @@ def main() -> None:
     )
 
     row_count = raw_df.count()
-    logger.info("Read %s records from %s", row_count, args["input_path"])
+    logger.info(f"Read {row_count} records from {args['input_path']}")
 
     df = normalize_columns(raw_df)
     df = (
@@ -119,10 +119,10 @@ def main() -> None:
             .partitionedBy("event_date")
         )
         writer.createOrReplace()
-        logger.info("Created Iceberg table %s", table_identifier)
+        logger.info(f"Created Iceberg table {table_identifier}")
     else:
         append_with_schema_evolution(spark, df, table_identifier)
-        logger.info("Appended data into Iceberg table %s", table_identifier)
+        logger.info(f"Appended data into Iceberg table {table_identifier}")
 
     job.commit()
 
