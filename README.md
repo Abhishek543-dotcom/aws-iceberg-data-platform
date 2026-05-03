@@ -126,6 +126,8 @@ make destroy
 - The Glue script is uploaded to the warehouse bucket by Terraform, so `script_location` always points at a real S3 object.
 - The landing prefix keeps EventBridge from firing on warehouse artifacts or unrelated objects.
 - The Glue job uses Iceberg table format version 2 and appends new files after the table exists. Basic schema evolution is handled by adding newly observed columns before append.
+- Glue continuous logs are written to the custom CloudWatch log group `/aws/glue/aws-iceberg-data-platform-dev/jobs`.
+- The log groups are configured with `skip_destroy = true`, so `terraform destroy` leaves Glue and Lambda logs behind for debugging.
 
 ## Interview Talking Points
 

@@ -30,6 +30,17 @@ resource "aws_iam_role" "glue" {
 
 data "aws_iam_policy_document" "glue_access" {
   statement {
+    sid = "DiscoverAndCreateGlueLogGroups"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:DescribeLogGroups"
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
     sid = "ReadLandingData"
 
     actions = [
@@ -128,6 +139,17 @@ resource "aws_iam_role" "lambda" {
 }
 
 data "aws_iam_policy_document" "lambda_access" {
+  statement {
+    sid = "DiscoverAndCreateLambdaLogGroups"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:DescribeLogGroups"
+    ]
+
+    resources = ["*"]
+  }
+
   statement {
     sid = "StartGlueJob"
 

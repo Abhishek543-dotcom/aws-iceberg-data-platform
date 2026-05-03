@@ -48,6 +48,16 @@ output "sns_topic_arn" {
   value       = module.sns.topic_arn
 }
 
+output "glue_log_group_name" {
+  description = "CloudWatch log group used by the Glue job continuous logs."
+  value       = module.cloudwatch.glue_log_group_name
+}
+
+output "lambda_log_group_name" {
+  description = "CloudWatch log group used by the trigger Lambda."
+  value       = module.cloudwatch.lambda_log_group_name
+}
+
 output "sample_upload_command" {
   description = "CLI command that uploads the sample CSV to the monitored landing prefix."
   value       = "aws s3 cp ../../sample-data/sample.csv s3://${module.s3.input_bucket_name}/${local.normalized_input_prefix}sample.csv"

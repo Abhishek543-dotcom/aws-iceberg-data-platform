@@ -27,3 +27,9 @@ variable "tags" {
   description = "Tags applied to CloudWatch resources."
   type        = map(string)
 }
+
+variable "preserve_logs_on_destroy" {
+  description = "Keep log groups and their history when Terraform destroys the stack."
+  type        = bool
+  default     = true
+}
