@@ -88,16 +88,6 @@ def main() -> None:
     job = Job(glue_context)
     job.init(args["JOB_NAME"], args)
 
-    spark.conf.set(
-        "spark.sql.extensions",
-        "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions",
-    )
-    spark.conf.set("spark.sql.catalog.glue_catalog", "org.apache.iceberg.spark.SparkCatalog")
-    spark.conf.set("spark.sql.catalog.glue_catalog.catalog-impl", "org.apache.iceberg.aws.glue.GlueCatalog")
-    spark.conf.set("spark.sql.catalog.glue_catalog.io-impl", "org.apache.iceberg.aws.s3.S3FileIO")
-    spark.conf.set("spark.sql.catalog.glue_catalog.warehouse", args["warehouse_path"])
-    spark.conf.set("spark.sql.defaultCatalog", "glue_catalog")
-
     glue_client = boto3.client("glue")
     table_identifier = f"glue_catalog.{args['database_name']}.{args['table_name']}"
 
