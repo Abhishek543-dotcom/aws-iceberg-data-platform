@@ -70,15 +70,21 @@ def main() -> None:
         sys.argv,
         [
             "JOB_NAME",
-            "input_path",
-            "source_bucket",
-            "source_key",
-            "event_time",
+            # "input_path",
+            # "source_bucket",
+            # "source_key",
+            # "event_time",
             "database_name",
             "table_name",
             "warehouse_path",
         ],
     )
+
+    # HARDCODED FOR MANUAL TESTING
+    args["source_bucket"] = "aws-iceberg-data-platform-dev-938834038098-in"
+    args["source_key"] = "landing/sample.csv"
+    args["input_path"] = f"s3://{args['source_bucket']}/{args['source_key']}"
+    args["event_time"] = "2023-01-01T00:00:00Z"
 
     spark_context = SparkContext()
     glue_context = GlueContext(spark_context)
