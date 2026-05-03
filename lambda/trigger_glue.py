@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from datetime import datetime, timezone
 from urllib.parse import unquote_plus
 
 import boto3
@@ -38,6 +39,7 @@ def lambda_handler(event, context):
 
     glue_job_name = os.environ["GLUE_JOB_NAME"]
     input_path = f"s3://{bucket_name}/{object_key}"
+    event_time = event.get("time", datetime.now(timezone.utc).isoformat())
 
     response = GLUE.start_job_run(
         JobName=glue_job_name,
@@ -45,7 +47,7 @@ def lambda_handler(event, context):
             "--input_path": input_path,
             "--source_bucket": bucket_name,
             "--source_key": object_key,
-            "--event_time": event.get("time", ""),
+            "--event_time": event_time,
         },
     )
 
